@@ -1,19 +1,24 @@
 package com.xtremepixel.memorygame
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.xtremepixel.memorygame.models.BoardSize
+import com.xtremepixel.memorygame.models.MemoryCard
 import kotlin.math.min
 
 class MemoryGameAdapter(
     private var context: Context,
     private var cardCount: BoardSize,
-    private var cardImage: List<Int>
+    private var card: List<MemoryCard>,
+    private var onCardClickedListener: CardClickedListener
 ) :
     RecyclerView.Adapter<MemoryGameAdapter.ViewHolder>() {
 
@@ -45,9 +50,15 @@ class MemoryGameAdapter(
 
         private val  imageButton = itemView.findViewById<ImageButton>(R.id.imageButton)
         fun bind(position: Int) {
-            imageButton.setImageResource(cardImage[position])
+            val memoryCard = card[position]
+            imageButton.setImageResource(if (memoryCard.isFace) memoryCard.identifier else R.drawable.ic_launcher_background)
+            imageButton.alpha = if (memoryCard.isMatched) .4f else 1.0f
+
+            val colorStateList : ColorStateList? = if (memoryCard.isMatched) ContextCompat.getColorStateList(context,R.color.color_gray) else null
+            ViewCompat.setBackgroundTintList(imageButton,colorStateList)
            imageButton.setOnClickListener {
                Log.i(TAG, "Clicked on position $position")
+               onCardClickedListener.onCardClicked(position)
            }
         }
     }
@@ -56,5 +67,10 @@ class MemoryGameAdapter(
 
         private const val MARGIN = 10
         private const val  TAG = "Memory Game Adapter"
+    }
+
+    interface  CardClickedListener{
+
+        fun onCardClicked(position: Int)
     }
 }
