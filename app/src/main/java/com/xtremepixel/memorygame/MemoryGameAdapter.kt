@@ -10,7 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.xtremepixel.memorygame.models.BoardSize
 import kotlin.math.min
 
-class MemoryGameAdapter(private var context: Context, private var cardCount: BoardSize) :
+class MemoryGameAdapter(
+    private var context: Context,
+    private var cardCount: BoardSize,
+    private var cardImage: List<Int>
+) :
     RecyclerView.Adapter<MemoryGameAdapter.ViewHolder>() {
 
 
@@ -41,6 +45,7 @@ class MemoryGameAdapter(private var context: Context, private var cardCount: Boa
 
         private val  imageButton = itemView.findViewById<ImageButton>(R.id.imageButton)
         fun bind(position: Int) {
+            imageButton.setImageResource(cardImage[position])
            imageButton.setOnClickListener {
                Log.i(TAG, "Clicked on position $position")
            }

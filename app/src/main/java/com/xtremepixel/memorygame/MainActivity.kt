@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.xtremepixel.memorygame.models.BoardSize
+import com.xtremepixel.memorygame.utils.DEFAULT_ICONS
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,8 +22,11 @@ class MainActivity : AppCompatActivity() {
         pairsText = findViewById(R.id.pairs)
         recyclerView = findViewById(R.id.recyclerViewBoard)
 
+        val chosenImage: List<Int> = DEFAULT_ICONS.shuffled().take(boardsize.getNumPairs())
+        val ramdomizedImage : List<Int> = (chosenImage + chosenImage).shuffled()
+
         recyclerView.layoutManager = GridLayoutManager(this, boardsize.getWidth())
         recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = MemoryGameAdapter(this, boardsize)
+        recyclerView.adapter = MemoryGameAdapter(this, boardsize, ramdomizedImage)
     }
 }
