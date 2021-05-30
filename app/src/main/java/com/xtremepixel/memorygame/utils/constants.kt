@@ -16,3 +16,4 @@ val DEFAULT_ICONS = listOf(
     R.drawable.ic_star,
     R.drawable.ic_work
 )
+const val EXTRA_BOARD_SIZE = "EXTRA_BOARD_SIZE"

@@ -1,6 +1,7 @@
 package com.xtremepixel.memorygame
 
 import android.animation.ArgbEvaluator
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -20,8 +21,14 @@ import com.xtremepixel.memorygame.models.BoardSize
 import com.xtremepixel.memorygame.models.MemoryCard
 import com.xtremepixel.memorygame.models.MemoryGame
 import com.xtremepixel.memorygame.utils.DEFAULT_ICONS
+import com.xtremepixel.memorygame.utils.EXTRA_BOARD_SIZE
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+
+        private const val CREAT_REQUEST_CODE = 10
+    }
 
     private lateinit var memoryGame: MemoryGame
     private lateinit var adapter:MemoryGameAdapter
@@ -97,8 +104,35 @@ class MainActivity : AppCompatActivity() {
 
                 return true
             }
+
+            R.id.memu_custom_game ->{
+                showCreateCustomDialog()
+
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showCreateCustomDialog() {
+        val boarsSizeView = LayoutInflater.from(this).inflate(R.layout.dialog_board_size,null)
+        val radioGroupSize:RadioGroup = boarsSizeView.findViewById(R.id.radioGroup)
+
+        showAlertDiolue("Create your own memory board", boarsSizeView, View.OnClickListener {
+
+            val desiredBoardsize:BoardSize = when(radioGroupSize.checkedRadioButtonId){
+
+                R.id.radioButton_easy -> BoardSize.EASY
+                R.id.radioButton_medium -> BoardSize.MEDIUM
+
+                else -> BoardSize.HARD
+            }
+
+            val createIntent = Intent(this, CreateActivity::class.java)
+            createIntent.putExtra(EXTRA_BOARD_SIZE,desiredBoardsize )
+            startActivityForResult(createIntent,CREAT_REQUEST_CODE)
+
+        })
     }
 
     private fun showNewSizeDialog() {
