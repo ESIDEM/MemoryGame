@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "286927398543",
+    "project_id": "memory-game-7fb34",
+    "storage_bucket": "memory-game-7fb34.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286927398543:android:50491a47aba3c4253c32fa",
+        "android_client_info": {
+          "package_name": "com.xtremepixel.memorygame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "286927398543-qb81ate0ds47ngucdi0a6hqtkbj37o7r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd7-a2XsabqzcUN-Lck2gFVgzjtha2tJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "286927398543-qb81ate0ds47ngucdi0a6hqtkbj37o7r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

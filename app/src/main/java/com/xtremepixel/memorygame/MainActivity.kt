@@ -46,12 +46,6 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerViewBoard)
         clrRoot = findViewById(R.id.clRoot)
 
-        // To be removed
-
-        val intent = Intent(this , CreateActivity::class.java)
-        intent.putExtra(EXTRA_BOARD_SIZE, BoardSize.MEDIUM)
-        startActivity(intent)
-
        setUpBoard()
     }
 
