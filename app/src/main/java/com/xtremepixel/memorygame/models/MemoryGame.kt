@@ -2,7 +2,7 @@ package com.xtremepixel.memorygame.models
 
 import com.xtremepixel.memorygame.utils.DEFAULT_ICONS
 
-class MemoryGame(private val boardSize: BoardSize) {
+class MemoryGame(private val boardSize: BoardSize, private val customImages: List<String>?) {
 
     private var indexOfSingleSelected : Int? = null
 
@@ -65,8 +65,14 @@ class MemoryGame(private val boardSize: BoardSize) {
     private var numCardFlip =0
 
     init {
-        val chosenImage: List<Int> = DEFAULT_ICONS.shuffled().take(boardSize.getNumPairs())
-        val ramdomizedImage : List<Int> = (chosenImage + chosenImage).shuffled()
-        cards = ramdomizedImage.map { MemoryCard(it) }
+        if (customImages == null){
+            val chosenImage: List<Int> = DEFAULT_ICONS.shuffled().take(boardSize.getNumPairs())
+            val ramdomizedImage : List<Int> = (chosenImage + chosenImage).shuffled()
+            cards = ramdomizedImage.map { MemoryCard(it) }
+        }else{
+            val randomImages = (customImages + customImages).shuffled()
+            cards = randomImages.map { MemoryCard(it.hashCode(),it) }
+        }
+
     }
 }

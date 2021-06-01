@@ -1,27 +1,32 @@
 package com.xtremepixel.memorygame
 
 import android.animation.ArgbEvaluator
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.jinatonic.confetti.CommonConfetti
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.xtremepixel.memorygame.models.BoardSize
-import com.xtremepixel.memorygame.models.MemoryCard
+import com.xtremepixel.memorygame.models.GameImageList
 import com.xtremepixel.memorygame.models.MemoryGame
-import com.xtremepixel.memorygame.utils.DEFAULT_ICONS
 import com.xtremepixel.memorygame.utils.EXTRA_BOARD_SIZE
+import com.xtremepixel.memorygame.utils.EXTRA_GAME_NAME
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,6 +41,9 @@ class MainActivity : AppCompatActivity() {
      private lateinit var pairsText: TextView
      private lateinit var recyclerView:RecyclerView
      private lateinit var clrRoot:ConstraintLayout
+     private val db = Firebase.firestore
+    private var gameName: String? = null
+    private var customGameImages : List<String>?=null
      private var  boardsize : BoardSize = BoardSize.EASY
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +78,7 @@ class MainActivity : AppCompatActivity() {
            pairsText.setTextColor(color)
            pairsText.text = "Pairs: ${memoryGame.numPairsFound} / ${boardsize.getNumPairs()}"
            if (memoryGame.haveWonTheGame()){
+               CommonConfetti.rainingConfetti(clrRoot, intArrayOf(Color.RED,Color.CYAN,Color.MAGENTA)).oneShot()
                Snackbar.make(clrRoot, "You won Congratulations.", Snackbar.LENGTH_LONG).show()
            }
        }
@@ -135,6 +144,38 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == CREAT_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            val gameName = data?.getStringExtra(EXTRA_GAME_NAME)
+
+            if (gameName == null){
+                Toast.makeText(this, "Something went wrong",Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            downloadGame(gameName)
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+
+    }
+
+    private fun downloadGame(customName: String) {
+        db.collection("games").document(customName).get().addOnSuccessListener {
+            val gameImageList =  it.toObject(GameImageList::class.java)
+            if (gameImageList?.images == null){
+                Toast.makeText(this, "Invalid image data", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
+        }
+            val numCards = gameImageList.images.size * 2
+            boardsize = BoardSize.getByValue(numCards)
+            gameName = customName
+            customGameImages = gameImageList.images
+            setUpBoard()
+        }.addOnFailureListener {
+
+        }
+    }
+
     private fun showNewSizeDialog() {
         val boarsSizeView = LayoutInflater.from(this).inflate(R.layout.dialog_board_size,null)
         val radioGroupSize:RadioGroup = boarsSizeView.findViewById(R.id.radioGroup)
@@ -185,7 +226,7 @@ class MainActivity : AppCompatActivity() {
                 pairsText.text = " Pairs: 0 / 12"
             }
         }
-        memoryGame = MemoryGame(boardsize)
+        memoryGame = MemoryGame(boardsize,customGameImages)
 
         recyclerView.layoutManager = GridLayoutManager(this, boardsize.getWidth())
         recyclerView.setHasFixedSize(true)
